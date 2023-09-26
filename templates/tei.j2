@@ -1,0 +1,14 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  {{ header|safe }}
+  {{ facs|safe }}
+  <text>
+    <body>{% for x in pages %}
+    <div xml:id="{{ x.div_id }}">
+      {{ x.pb|safe }}
+      {% for y in x.abs %}
+        {{ y|safe }}
+      {% endfor %}
+    </div>{% endfor %}
+    </body>
+  </text>
+</TEI>

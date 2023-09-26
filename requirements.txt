@@ -1,3 +1,5 @@
 acdh-transkribus-utils
+acdh-tei-pyutils
+jinja2
 saxonche==12.1.0
 icecream>=2,<3
