@@ -56,3 +56,25 @@ for x in files:
 for x in glob.glob(f"{out_dir}/*.xml"):
     doc = TeiReader(x)
     doc.tree_to_file(x)
+
+
+files = glob.glob("./tei/*.xml")
+ic(len(files))
+
+with open("data.jsonl", "w", encoding="utf-8") as f:
+    for x in glob.glob(f"{out_dir}/*.xml"):
+        _, tail = os.path.split(x)
+        item = {}
+        doc = TeiReader(x)
+        for y in doc.any_xpath('.//tei:body/tei:div'):
+            dr_id = y.attrib["{http://www.w3.org/XML/1998/namespace}id"]
+            ic(dr_id)
+            item["id"] = dr_id
+            item["text"] = (
+                " ".join("".join(y.itertext()).split())
+                .replace("\n", " ")
+                .replace("¬ ", "")
+                .replace("= ", "")
+                .replace("=", "")
+            )
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
