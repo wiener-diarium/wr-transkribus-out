@@ -19,6 +19,13 @@ jobs:
       run: pip install -r requirements.txt
     - name: download and process
       run: python download_and_transform.py
+    - name: make jsonl
+      run: python postprocess.py
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Export and Transformation done
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        publish_dir: ./html
