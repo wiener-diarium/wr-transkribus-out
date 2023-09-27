@@ -2,10 +2,10 @@ import os
 import glob
 import jinja2
 import json
-import requests
 import lxml.etree as ET
 from acdh_tei_pyutils.tei import TeiReader
 from icecream import ic
+from tqdm import tqdm
 
 templateLoader = jinja2.FileSystemLoader(searchpath="./templates")
 templateEnv = jinja2.Environment(loader=templateLoader)
@@ -13,11 +13,12 @@ template = templateEnv.get_template("tei.j2")
 
 
 files = glob.glob("./tei/*.xml")
-out_dir = "tmp"
+out_dir = "html"
 os.makedirs(out_dir, exist_ok=True)
 
 
-for x in files:
+print(f"upconverting {len(files)} transkribus export TEIs and saving them into {out_dir}")
+for x in tqdm(files, total=len(files)):
     doc = TeiReader(x)
     dr_id = doc.any_xpath(".//tei:title[@type='main']/text()")[0].split(" ")[-1]
     file_name = f"wr_{dr_id}.xml"
@@ -57,18 +58,16 @@ for x in glob.glob(f"{out_dir}/*.xml"):
     doc = TeiReader(x)
     doc.tree_to_file(x)
 
-
-files = glob.glob("./tei/*.xml")
-ic(len(files))
-
-with open("data.jsonl", "w", encoding="utf-8") as f:
-    for x in glob.glob(f"{out_dir}/*.xml"):
+data_save_path = os.path.join(out_dir, "data.jsonl")
+print(f"creating JSONL for each page from upconverted teis and saving it as {data_save_path}")
+counter = 0
+with open(data_save_path, "w", encoding="utf-8") as f:
+    for x in tqdm(glob.glob(f"{out_dir}/*.xml")):
         _, tail = os.path.split(x)
         item = {}
         doc = TeiReader(x)
         for y in doc.any_xpath('.//tei:body/tei:div'):
             dr_id = y.attrib["{http://www.w3.org/XML/1998/namespace}id"]
-            ic(dr_id)
             item["id"] = dr_id
             item["text"] = (
                 " ".join("".join(y.itertext()).split())
@@ -77,4 +76,6 @@ with open("data.jsonl", "w", encoding="utf-8") as f:
                 .replace("= ", "")
                 .replace("=", "")
             )
+            counter += 1
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
+print(f"done, created {data_save_path} for {counter} pages")

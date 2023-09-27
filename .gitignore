@@ -165,3 +165,5 @@ secret*
 jupyter*
 data.jsonl
 /tmp
+html/*.xml
+html/*.jsonl
