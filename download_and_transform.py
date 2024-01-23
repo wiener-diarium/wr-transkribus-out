@@ -29,7 +29,7 @@ ic(ids)
 ic(len(ids))
 
 for y in ids:
-    if y == "209213":
+    if y == 209213:
         col_id = y
         print(f"processing collection: {col_id}")
         mpr_docs = transkribus_client.collection_to_mets(col_id, file_path="./mets")
