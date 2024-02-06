@@ -71,9 +71,9 @@ with open(data_save_path, "w", encoding="utf-8") as f:
         pb = doc.any_xpath(".//tei:pb")
         for page in pb:
             facs = page.attrib["facs"]
-            page = page.attrib["n"]
-            dr_id = f"wr_{date}__{page:0>2}"
-            full_text = doc.any_xpath(f".//tei:body/tei:div[tei:pb[@facs='{facs}']]")
+            nr = page.attrib["n"]
+            dr_id = f"wr_{date}__{nr:0>2}"
+            full_text = doc.any_xpath(f".//tei:body/tei:div[tei:*[1][contains(@facs, {facs})]]")
             item["id"] = dr_id
             item["text"] = (
                 " ".join("".join(full_text.itertext()).split())
