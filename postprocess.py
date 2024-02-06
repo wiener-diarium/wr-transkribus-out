@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 # files = glob.glob("./tei/*.xml")
+input_dir = "tei"
 out_dir = "html"
 # os.makedirs(out_dir, exist_ok=True)
 
@@ -62,15 +63,20 @@ data_save_path = os.path.join(out_dir, "data.jsonl")
 print(f"creating JSONL for each page from upconverted teis and saving it as {data_save_path}")
 counter = 0
 with open(data_save_path, "w", encoding="utf-8") as f:
-    for x in tqdm(glob.glob(f"{out_dir}/*.xml")):
+    for x in tqdm(glob.glob(f"{input_dir}/*.xml")):
         _, tail = os.path.split(x)
         item = {}
         doc = TeiReader(x)
-        for y in doc.any_xpath('.//tei:body/tei:div'):
-            dr_id = y.attrib["{http://www.w3.org/XML/1998/namespace}id"]
+        date = doc.any_xpath(".//tei:title[@type='main']/text()")[0].split(" ")[-1]
+        pb = doc.any_xpath(".//tei:pb")
+        for page in pb:
+            facs = pb.attrib["facs"]
+            page = pb.attrib["n"]
+            dr_id = f"wr_{date}__{page:0>2}"
+            full_text = doc.any_xpath('.//tei:body/tei:div')
             item["id"] = dr_id
             item["text"] = (
-                " ".join("".join(y.itertext()).split())
+                " ".join("".join(full_text.itertext()).split())
                 .replace("\n", " ")
                 .replace("¬ ", "")
                 .replace("= ", "")
