@@ -71,12 +71,14 @@ with open(data_save_path, "w", encoding="utf-8") as f:
         pb = doc.any_xpath(".//tei:pb")
         for page in pb:
             facs = page.attrib["facs"]
+            print(facs)
             nr = page.attrib["n"]
             dr_id = f"wr_{date}__{nr:0>2}"
-            full_text = doc.any_xpath(f".//tei:body/tei:div[tei:*[1][contains(@facs, {facs})]]")
+            full_text = doc.any_xpath(".//tei:body/tei:div[tei:*[contains(@facs, '{}')]]".format(facs))
+            print(full_text)
             item["id"] = dr_id
             item["text"] = (
-                " ".join("".join(full_text.itertext()).split())
+                " ".join(" ".join("".join(p.itertext()).split()) for p in full_text)
                 .replace("\n", " ")
                 .replace("¬ ", "")
                 .replace("= ", "")

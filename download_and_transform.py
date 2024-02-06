@@ -15,7 +15,9 @@ os.makedirs(METS_DIR, exist_ok=True)
 os.makedirs(TEI_DIR, exist_ok=True)
 
 transkribus_client = ACDHTranskribusUtils(
-    user=user, password=pw, transkribus_base_url="https://transkribus.eu/TrpServer/rest"
+    user=user,
+    password=pw,
+    transkribus_base_url="https://transkribus.eu/TrpServer/rest"
 )
 
 data = requests.get(url).json()
@@ -32,7 +34,8 @@ for y in ids:
     if y == 209213:
         col_id = y
         print(f"processing collection: {col_id}")
-        mpr_docs = transkribus_client.collection_to_mets(col_id, file_path="./mets")
+        mpr_docs = transkribus_client.collection_to_mets(col_id,
+                                                         file_path="./mets")
         ic(f"{METS_DIR}/{col_id}*.xml")
         files = glob.glob(f"{METS_DIR}/{col_id}/*_mets.xml")
         for x in files:
@@ -42,7 +45,8 @@ for y in ids:
             ic(f"transforming mets: {x} to {tei_file}")
             with PySaxonProcessor(license=False) as proc:
                 xsltproc = proc.new_xslt30_processor()
-                xsltproc.set_parameter("combine", proc.make_boolean_value(True))
+                xsltproc.set_parameter("combine",
+                                       proc.make_boolean_value(True))
                 xsltproc.set_parameter("ab", proc.make_boolean_value(True))
                 document = proc.parse_xml(xml_file_name=x)
                 executable = xsltproc.compile_stylesheet(stylesheet_file=XSLT)
