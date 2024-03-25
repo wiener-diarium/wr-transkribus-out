@@ -6,6 +6,7 @@ import json
 from acdh_tei_pyutils.tei import TeiReader
 # from icecream import ic
 from tqdm import tqdm
+import zipfile
 
 # templateLoader = jinja2.FileSystemLoader(searchpath="./templates")
 # templateEnv = jinja2.Environment(loader=templateLoader)
@@ -84,4 +85,11 @@ with open(data_save_path, "w", encoding="utf-8") as f:
             )
             counter += 1
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
-print(f"done, created {data_save_path} for {counter} pages")
+
+print(f"done, created {data_save_path} for {counter} pages. Creating zip archive...")
+
+with zipfile.ZipFile("html/data.zip", "w") as z:
+    z.write(data_save_path, arcname=os.path.basename(data_save_path))
+print(f"done, created html/data.zip for {data_save_path}")
+os.remove(data_save_path)
+print(f"removed {data_save_path}")

@@ -164,6 +164,7 @@ cython_debug/
 secret*
 jupyter*
 data.jsonl
+data.zip
 /tmp
 html/*.xml
 html/*.jsonl
