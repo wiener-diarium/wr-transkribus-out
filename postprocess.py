@@ -88,7 +88,7 @@ with open(data_save_path, "w", encoding="utf-8") as f:
 
 print(f"done, created {data_save_path} for {counter} pages. Creating zip archive...")
 
-with zipfile.ZipFile("html/data.zip", "w") as z:
+with zipfile.ZipFile("html/data.zip", "w", zipfile.ZIP_DEFLATED) as z:
     z.write(data_save_path, arcname=os.path.basename(data_save_path))
 print(f"done, created html/data.zip for {data_save_path}")
 os.remove(data_save_path)
